@@ -33,6 +33,8 @@
 
         <a href='https://dev.rea.hrel.ru/NSS/?type=ban_admin&admin_id='>Забанить админа</a><br>\n
 
+        <a href='https://dev.rea.hrel.ru/NSS/?type=list_admins'>Список админов</a><br>\n
+
         <a href='https://dev.rea.hrel.ru/NSS/?type=add_client_card&card_number='>Добавить карту клиента</a><br>\n
 
         <a href='https://dev.rea.hrel.ru/NSS/?type=add_client_card&balance=&card_number='>Добавить карту клиента со стартовым балансом</a><br>\n
@@ -731,6 +733,41 @@ echo ajax_echo(
 );
 exit();
 }
+
+// список админов
+if(preg_match_all("/^(list_admins)$/ui", $_GET['type'])){
+
+    $query = "SELECT * FROM `admins` WHERE `is_banned` = 0";
+    $res_query = mysqli_query($connection, $query);
+    
+    if(!$res_query){
+        echo ajax_echo(
+            "Ошибка!",
+            "Ошибка в запросе!",
+            true,
+            "ERROR",
+            null
+        );
+        exit();
+    }
+    
+    $arr_res = array();
+    $rows = mysqli_num_rows($res_query);
+    
+    for ($i=0; $i < $rows; $i++) { 
+        $row = mysqli_fetch_assoc($res_query);
+        array_push($arr_res, $row);
+    }
+    
+    echo ajax_echo(
+        "Уcпех!",
+        "Список клиентов",
+        false,
+        "SUCCESS",
+        $arr_res
+    );
+    exit();
+    }
 
 //Бан клиента
 else if(preg_match_all("/^(ban_client)$/ui", $_GET['type'])){
